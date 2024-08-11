@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "604393085392",
+    "project_id": "adsensiguru-new",
+    "storage_bucket": "adsensiguru-new.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604393085392:android:eec5aa7e0381af1d6041d5",
+        "android_client_info": {
+          "package_name": "com.daviddmpp.teacherabsence"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5kaUNnj9X227v4OSxau_IuN2uhsmgYkc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

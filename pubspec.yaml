@@ -36,8 +36,8 @@ dependencies:
   intl: ^0.18.1
   shared_preferences: ^2.2.0
 
-  # Notifikasi
-  flutter_local_notifications: ^9.9.1
+  # # Notifikasi
+  # flutter_local_notifications: ^15.1.0+1
 
 dev_dependencies:
   flutter_test:

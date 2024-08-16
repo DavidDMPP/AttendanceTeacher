@@ -22,7 +22,8 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               child: const Text('Riwayat Absensi'),
-              onPressed: () => Navigator.pushNamed(context, '/attendance_history'),
+              onPressed: () =>
+                  Navigator.pushNamed(context, '/attendance_history'),
             ),
             ElevatedButton(
               child: const Text('Chat'),

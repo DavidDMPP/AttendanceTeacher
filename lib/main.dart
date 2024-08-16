@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:logging/logging.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
@@ -15,6 +16,14 @@ import 'providers/location_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Configure logging
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    // Instead of print, we use developer.log
+    // This will output to the console in debug mode, but not in release mode
+    debugPrint('${record.level.name}: ${record.time}: ${record.message}');
+  });
 
   runApp(
     MultiProvider(

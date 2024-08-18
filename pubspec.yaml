@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  permission_handler: ^11.1.0
+
   # myapp:
   #   path: .
 

@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import '../widgets/attendance_button.dart';
 import '../widgets/location_status_indicator.dart';
 
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -15,7 +16,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             const LocationStatusIndicator(),
             const SizedBox(height: 20),
             const AttendanceButton(),

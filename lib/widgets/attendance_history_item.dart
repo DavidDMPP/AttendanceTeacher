@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/attendance.dart';
-import '../utils/time_utils.dart';
 
 class AttendanceHistoryItem extends StatelessWidget {
   final Attendance attendance;
@@ -10,9 +9,11 @@ class AttendanceHistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(formatDateTime(attendance.timestamp)),
-      subtitle: Text(attendance.isCheckIn ? 'Check In' : 'Check Out'),
-      trailing: Icon(
+      title: Text(
+          '${attendance.getFormattedDate()} ${attendance.getFormattedTime()}'),
+      subtitle: Text(
+          'Type: ${attendance.type}\nLocation: ${attendance.location.latitude}, ${attendance.location.longitude}'),
+      leading: Icon(
         attendance.isCheckIn ? Icons.login : Icons.logout,
         color: attendance.isCheckIn ? Colors.green : Colors.red,
       ),

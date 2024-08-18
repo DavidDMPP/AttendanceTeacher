@@ -42,4 +42,8 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+<!-- Suggested code may be subject to a license. Learn more: ~LicenseLog:3620746757. -->
+<!-- Suggested code may be subject to a license. Learn more: ~LicenseLog:3702185097. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 </manifest>

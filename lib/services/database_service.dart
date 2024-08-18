@@ -8,8 +8,7 @@ final _logger = Logger('DatabaseService');
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addAttendance(
-      String teacherId, GeoPoint location, String type) async {
+  Future<void> addAttendance(String teacherId, GeoPoint location, String type) async {
     try {
       _logger.info('Adding attendance for teacher: $teacherId, type: $type');
       await _firestore.collection('attendances').add({
@@ -21,6 +20,33 @@ class DatabaseService {
       _logger.info('Attendance added successfully');
     } catch (e) {
       _logger.severe('Error adding attendance', e);
+      rethrow;
+    }
+  }
+
+  Future<String> getNextAttendanceType(String teacherId) async {
+    try {
+      final today = DateTime.now().toLocal();
+      final startOfDay = DateTime(today.year, today.month, today.day);
+      final endOfDay = startOfDay.add(const Duration(days: 1));
+
+      final querySnapshot = await _firestore
+          .collection('attendances')
+          .where('teacherId', isEqualTo: teacherId)
+          .where('date', isGreaterThanOrEqualTo: startOfDay)
+          .where('date', isLessThan: endOfDay)
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return 'Check-In';
+      } else {
+        final lastAttendance = querySnapshot.docs.first;
+        return lastAttendance['type'] == 'Check-In' ? 'Check-Out' : 'Check-In';
+      }
+    } catch (e) {
+      _logger.severe('Error getting next attendance type', e);
       rethrow;
     }
   }
@@ -40,8 +66,7 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateProfile(
-      String teacherId, Map<String, dynamic> data) async {
+  Future<void> updateProfile(String teacherId, Map<String, dynamic> data) async {
     try {
       _logger.info('Updating profile for teacher: $teacherId');
       await _firestore.collection('teachers').doc(teacherId).update(data);
@@ -55,8 +80,7 @@ class DatabaseService {
   Future<Teacher?> getTeacher(String teacherId) async {
     try {
       _logger.info('Getting teacher data for ID: $teacherId');
-      DocumentSnapshot doc =
-          await _firestore.collection('teachers').doc(teacherId).get();
+      DocumentSnapshot doc = await _firestore.collection('teachers').doc(teacherId).get();
       if (doc.exists) {
         _logger.info('Teacher data found');
         return Teacher.fromMap(doc.data() as Map<String, dynamic>, doc.id);

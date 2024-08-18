@@ -30,15 +30,18 @@ class AttendanceButton extends StatelessWidget {
 
             if (isWithinRange) {
               final geoPoint = GeoPoint(position.latitude, position.longitude);
+              final attendanceType =
+                  await databaseService.getNextAttendanceType(user.uid);
+
               await databaseService.addAttendance(
                 user.uid,
                 geoPoint,
-                'attendance',
+                attendanceType,
               );
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Attendance recorded successfully')),
+                  SnackBar(
+                      content: Text('$attendanceType recorded successfully')),
                 );
               }
             } else {

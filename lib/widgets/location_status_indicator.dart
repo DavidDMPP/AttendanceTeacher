@@ -16,7 +16,9 @@ class LocationStatusIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        locationProvider.isWithinRange ? 'Dalam Jangkauan' : 'Di Luar Jangkauan',
+        locationProvider.isWithinRange
+            ? 'Dalam Jangkauan'
+            : 'Di Luar Jangkauan',
         style: const TextStyle(color: Colors.white),
       ),
     );

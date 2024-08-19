@@ -14,7 +14,10 @@ class ChatMessageBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(message.senderId, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            message.senderName,
+            style: const TextStyle(fontWeight: FontWeight.bold)
+          ),
           Container(
             decoration: BoxDecoration(
               color: Colors.grey[300],
@@ -23,8 +26,10 @@ class ChatMessageBubble extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: Text(message.content),
           ),
-          Text(formatDateTime(message.timestamp), 
-               style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(
+            formatDateTime(message.timestamp),
+            style: const TextStyle(fontSize: 12, color: Colors.grey)
+          ),
         ],
       ),
     );

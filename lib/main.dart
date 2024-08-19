@@ -10,6 +10,7 @@ import 'screens/chat_screen.dart';
 import 'services/auth_service.dart';
 import 'services/database_service.dart';
 import 'services/location_service.dart';
+import 'services/chat_service.dart';
 import 'providers/auth_provider.dart';
 import 'providers/location_provider.dart';
 
@@ -20,20 +21,25 @@ void main() async {
   // Configure logging
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
-    // Instead of print, we use developer.log
-    // This will output to the console in debug mode, but not in release mode
     debugPrint('${record.level.name}: ${record.time}: ${record.message}');
   });
+
+  final authService = AuthService();
+  final databaseService = DatabaseService();
+  final locationService = LocationService();
+  final chatService = ChatService(authService, databaseService);
 
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthService>(create: (_) => AuthService()),
-        Provider<DatabaseService>(create: (_) => DatabaseService()),
-        Provider<LocationService>(create: (_) => LocationService()),
+        Provider<AuthService>.value(value: authService),
+        Provider<DatabaseService>.value(value: databaseService),
+        Provider<LocationService>.value(value: locationService),
+        Provider<ChatService>.value(value: chatService),
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
         ChangeNotifierProvider<LocationProvider>(
-            create: (_) => LocationProvider()),
+          create: (_) => LocationProvider(locationService),
+        ),
       ],
       child: const MyApp(),
     ),

@@ -4,6 +4,9 @@ import '../services/auth_service.dart';
 import '../services/chat_service.dart';
 import '../models/message.dart';
 import '../widgets/chat_message_bubble.dart';
+import 'package:logging/logging.dart';
+
+final _logger = Logger('ChatScreen');
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -13,7 +16,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class ChatScreenState extends State<ChatScreen> {
-  final _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   String _message = '';
 
   @override
@@ -52,17 +55,30 @@ class ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(hintText: 'Ketik pesan...'),
+                    decoration:
+                        const InputDecoration(hintText: 'Ketik pesan...'),
                     onChanged: (value) => _message = value,
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_message.isNotEmpty) {
-                      chatService.sendMessage(authService.currentUser?.uid ?? '', _message);
-                      _controller.clear();
-                      _message = '';
+                      if (authService.currentUser != null) {
+                        await chatService.sendMessage(_message);
+                        _controller.clear();
+                        setState(() {
+                          _message = '';
+                        });
+                      } else {
+                        _logger.warning(
+                            'Attempt to send message without being logged in');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Anda harus login untuk mengirim pesan')),
+                        );
+                      }
                     }
                   },
                 ),
@@ -72,5 +88,11 @@ class ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

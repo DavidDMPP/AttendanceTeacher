@@ -8,7 +8,12 @@ final _logger = Logger('DatabaseService');
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addAttendance(String teacherId, GeoPoint location, String type) async {
+  Future<void> addAttendance(
+      String teacherId, GeoPoint location, String type) async {
+    if (teacherId.isEmpty) {
+      _logger.severe('Attempted to add attendance with empty teacherId');
+      throw ArgumentError('teacherId cannot be empty');
+    }
     try {
       _logger.info('Adding attendance for teacher: $teacherId, type: $type');
       await _firestore.collection('attendances').add({
@@ -25,6 +30,11 @@ class DatabaseService {
   }
 
   Future<String> getNextAttendanceType(String teacherId) async {
+    if (teacherId.isEmpty) {
+      _logger
+          .severe('Attempted to get next attendance type with empty teacherId');
+      throw ArgumentError('teacherId cannot be empty');
+    }
     try {
       final today = DateTime.now().toLocal();
       final startOfDay = DateTime(today.year, today.month, today.day);
@@ -52,6 +62,11 @@ class DatabaseService {
   }
 
   Stream<List<Attendance>> getAttendanceHistory(String teacherId) {
+    if (teacherId.isEmpty) {
+      _logger
+          .severe('Attempted to get attendance history with empty teacherId');
+      return Stream.value([]);
+    }
     _logger.info('Getting attendance history for teacher: $teacherId');
     return _firestore
         .collection('attendances')
@@ -66,7 +81,12 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateProfile(String teacherId, Map<String, dynamic> data) async {
+  Future<void> updateProfile(
+      String teacherId, Map<String, dynamic> data) async {
+    if (teacherId.isEmpty) {
+      _logger.severe('Attempted to update profile with empty teacherId');
+      throw ArgumentError('teacherId cannot be empty');
+    }
     try {
       _logger.info('Updating profile for teacher: $teacherId');
       await _firestore.collection('teachers').doc(teacherId).update(data);
@@ -78,9 +98,14 @@ class DatabaseService {
   }
 
   Future<Teacher?> getTeacher(String teacherId) async {
+    if (teacherId.isEmpty) {
+      _logger.severe('Attempted to get teacher data with empty teacherId');
+      return null;
+    }
     try {
       _logger.info('Getting teacher data for ID: $teacherId');
-      DocumentSnapshot doc = await _firestore.collection('teachers').doc(teacherId).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('teachers').doc(teacherId).get();
       if (doc.exists) {
         _logger.info('Teacher data found');
         return Teacher.fromMap(doc.data() as Map<String, dynamic>, doc.id);

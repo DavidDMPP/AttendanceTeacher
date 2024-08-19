@@ -29,8 +29,6 @@ class AuthProvider with ChangeNotifier {
       return _user != null;
     } catch (e) {
       _logger.severe('Sign in failed', e);
-      _logger.info(
-          'Detailed error in AuthProvider: $e'); // This will print the full error message
       return false;
     }
   }

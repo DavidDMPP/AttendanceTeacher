@@ -24,69 +24,65 @@ class ChatScreenState extends State<ChatScreen> {
     final authService = Provider.of<AuthService>(context);
     final chatService = Provider.of<ChatService>(context);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Chat')),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: StreamBuilder<List<Message>>(
-              stream: chatService.getMessages(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('Tidak ada pesan'));
-                }
-                return ListView.builder(
-                  reverse: true,
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return ChatMessageBubble(message: snapshot.data![index]);
-                  },
-                );
-              },
-            ),
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: StreamBuilder<List<Message>>(
+            stream: chatService.getMessages(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text('Tidak ada pesan'));
+              }
+              return ListView.builder(
+                reverse: true,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return ChatMessageBubble(message: snapshot.data![index]);
+                },
+              );
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration:
-                        const InputDecoration(hintText: 'Ketik pesan...'),
-                    onChanged: (value) => _message = value,
-                  ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  decoration: const InputDecoration(hintText: 'Ketik pesan...'),
+                  onChanged: (value) => _message = value,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () async {
-                    if (_message.isNotEmpty) {
-                      if (authService.currentUser != null) {
-                        await chatService.sendMessage(_message);
-                        _controller.clear();
-                        setState(() {
-                          _message = '';
-                        });
-                      } else {
-                        _logger.warning(
-                            'Attempt to send message without being logged in');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Anda harus login untuk mengirim pesan')),
-                        );
-                      }
+              ),
+              IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: () async {
+                  if (_message.isNotEmpty) {
+                    if (authService.currentUser != null) {
+                      await chatService.sendMessage(_message);
+                      _controller.clear();
+                      setState(() {
+                        _message = '';
+                      });
+                    } else {
+                      _logger.warning(
+                          'Attempt to send message without being logged in');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content:
+                                Text('Anda harus login untuk mengirim pesan')),
+                      );
                     }
-                  },
-                ),
-              ],
-            ),
+                  }
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

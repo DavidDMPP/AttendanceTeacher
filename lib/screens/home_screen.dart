@@ -1,51 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../services/auth_service.dart';
+import 'attendance_history_screen.dart';
+import 'chat_screen.dart';
+import 'profile_screen.dart';
 import '../widgets/attendance_button.dart';
 import '../widgets/location_status_indicator.dart';
 
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  static const List<Widget> _widgetOptions = <Widget>[
+    _HomeContent(),
+    AttendanceHistoryScreen(),
+    ChatScreen(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const LocationStatusIndicator(),
-            const SizedBox(height: 20),
-            const AttendanceButton(),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Riwayat Absensi'),
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/attendance_history'),
-            ),
-            ElevatedButton(
-              child: const Text('Chat'),
-              onPressed: () => Navigator.pushNamed(context, '/chat'),
-            ),
-            ElevatedButton(
-              child: const Text('Profil'),
-              onPressed: () => Navigator.pushNamed(context, '/profile'),
-            ),
-            ElevatedButton(
-              child: const Text('Logout'),
-              onPressed: () async {
-                await authService.signOut();
-                if (context.mounted) {
-                  Navigator.pushReplacementNamed(context, '/');
-                }
-              },
-            ),
-          ],
-        ),
+        child: _widgetOptions.elementAt(_selectedIndex),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Riwayat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class _HomeContent extends StatelessWidget {
+  const _HomeContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        LocationStatusIndicator(),
+        SizedBox(height: 20),
+        AttendanceButton(),
+      ],
     );
   }
 }

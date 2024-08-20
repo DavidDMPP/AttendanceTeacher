@@ -4,9 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:logging/logging.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/profile_screen.dart';
-import 'screens/attendance_history_screen.dart';
-import 'screens/chat_screen.dart';
 import 'services/auth_service.dart';
 import 'services/database_service.dart';
 import 'services/location_service.dart';
@@ -18,7 +15,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Configure logging
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((record) {
     debugPrint('${record.level.name}: ${record.time}: ${record.message}');
@@ -57,14 +53,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/profile': (context) => const ProfileScreen(),
-        '/attendance_history': (context) => const AttendanceHistoryScreen(),
-        '/chat': (context) => const ChatScreen(),
-      },
+      home: Consumer<AuthProvider>(
+        builder: (context, authProvider, _) {
+          if (authProvider.user != null) {
+            return const HomeScreen();
+          } else {
+            return const LoginScreen();
+          }
+        },
+      ),
     );
   }
 }

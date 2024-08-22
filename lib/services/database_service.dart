@@ -81,6 +81,33 @@ class DatabaseService {
     });
   }
 
+  Stream<List<Attendance>> getTodayAttendanceHistory(String teacherId) {
+    if (teacherId.isEmpty) {
+      _logger.severe(
+          'Attempted to get today\'s attendance history with empty teacherId');
+      return Stream.value([]);
+    }
+    _logger.info('Getting today\'s attendance history for teacher: $teacherId');
+    final today = DateTime.now().toLocal();
+    final startOfDay = DateTime(today.year, today.month, today.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    return _firestore
+        .collection('attendances')
+        .where('teacherId', isEqualTo: teacherId)
+        .where('date', isGreaterThanOrEqualTo: startOfDay)
+        .where('date', isLessThan: endOfDay)
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      _logger.info(
+          'Received ${snapshot.docs.length} attendance records for today');
+      return snapshot.docs
+          .map((doc) => Attendance.fromMap(doc.data(), doc.id))
+          .toList();
+    });
+  }
+
   Future<void> updateProfile(
       String teacherId, Map<String, dynamic> data) async {
     if (teacherId.isEmpty) {
